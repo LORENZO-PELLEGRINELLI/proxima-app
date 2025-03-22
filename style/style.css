@@ -1,0 +1,36 @@
+/* Mobile-first: layout per smartphone */
+.dashboard-container {
+    padding: 1rem;
+}
+
+.dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+/* Layout per tablet e dispositivi più grandi */
+@media (min-width: 768px) {
+    .dashboard-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .control-container.tablet-layout {
+        padding: 1rem 2rem;
+    }
+}
+
+/* Altri stili, come font, spaziature, colori, ecc. */
+/* Esempio per i pulsanti della modalità */
+.mode-button {
+    padding: 0.5rem 1rem;
+    margin: 0.5rem;
+    font-size: 1rem;
+}
+
+.mode-button.active {
+    background-color: #007bff;
+    color: white;
+}
