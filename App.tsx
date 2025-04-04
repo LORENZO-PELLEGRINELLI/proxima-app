@@ -6,9 +6,10 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Animated,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather, MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 // Component per mostrare lo stato della connessione
 const ConnectionStatus = ({ isConnected }) => {
@@ -28,18 +29,30 @@ const ConnectionStatus = ({ isConnected }) => {
 };
 
 // Component per la visualizzazione dei dati dei sensori
-const SensorData = ({ distance, irLeft, irRight }) => {
+const SensorData = ({ distance, irLeft, irRight, isDarkMode }) => {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, isDarkMode && styles.darkCard]}>
       <View style={styles.cardHeader}>
-        <Feather name="compass" size={24} style={styles.cardIcon} />
-        <Text style={styles.cardTitle}>Sensors</Text>
+        <Feather
+          name="compass"
+          size={24}
+          style={[styles.cardIcon, isDarkMode && styles.darkCardIcon]}
+        />
+        <Text style={[styles.cardTitle, isDarkMode && styles.darkText]}>
+          Sensors
+        </Text>
       </View>
       <View style={styles.cardContent}>
         <View style={styles.sensorValue}>
-          <Text style={styles.sensorLabel}>Distance</Text>
-          <Text style={styles.sensorReading}>{distance.toFixed(1)} cm</Text>
-          <View style={styles.sensorBar}>
+          <Text
+            style={[styles.sensorLabel, isDarkMode && styles.darkSecondaryText]}
+          >
+            Distance
+          </Text>
+          <Text style={[styles.sensorReading, isDarkMode && styles.darkText]}>
+            {distance.toFixed(1)} cm
+          </Text>
+          <View style={[styles.sensorBar, isDarkMode && styles.darkProgressBg]}>
             <View
               style={[
                 styles.sensorProgress,
@@ -50,7 +63,14 @@ const SensorData = ({ distance, irLeft, irRight }) => {
         </View>
         <View style={styles.sensorsGrid}>
           <View style={styles.irSensor}>
-            <Text style={styles.sensorLabel}>Left IR</Text>
+            <Text
+              style={[
+                styles.sensorLabel,
+                isDarkMode && styles.darkSecondaryText,
+              ]}
+            >
+              Left IR
+            </Text>
             <Text
               style={[
                 styles.sensorStatus,
@@ -61,7 +81,14 @@ const SensorData = ({ distance, irLeft, irRight }) => {
             </Text>
           </View>
           <View style={styles.irSensor}>
-            <Text style={styles.sensorLabel}>Right IR</Text>
+            <Text
+              style={[
+                styles.sensorLabel,
+                isDarkMode && styles.darkSecondaryText,
+              ]}
+            >
+              Right IR
+            </Text>
             <Text
               style={[
                 styles.sensorStatus,
@@ -78,24 +105,50 @@ const SensorData = ({ distance, irLeft, irRight }) => {
 };
 
 // Component per la visualizzazione dello stato del movimento
-const MovementStatus = ({ movement, speed }) => {
+const MovementStatus = ({ movement, speed, isDarkMode }) => {
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, isDarkMode && styles.darkCard]}>
       <View style={styles.cardHeader}>
-        <Feather name="activity" size={24} style={styles.cardIcon} />
-        <Text style={styles.cardTitle}>Movement</Text>
+        <Feather
+          name="activity"
+          size={24}
+          style={[styles.cardIcon, isDarkMode && styles.darkCardIcon]}
+        />
+        <Text style={[styles.cardTitle, isDarkMode && styles.darkText]}>
+          Movement
+        </Text>
       </View>
       <View style={styles.cardContent}>
         <View style={styles.movementInfo}>
           <View style={styles.currentStatus}>
-            <Text style={styles.statusLabel}>Status</Text>
-            <Text style={styles.movementValue}>{movement}</Text>
+            <Text
+              style={[
+                styles.statusLabel,
+                isDarkMode && styles.darkSecondaryText,
+              ]}
+            >
+              Status
+            </Text>
+            <Text style={[styles.movementValue, isDarkMode && styles.darkText]}>
+              {movement}
+            </Text>
           </View>
           <View style={styles.speedDisplay}>
-            <Text style={styles.statusLabel}>Speed</Text>
+            <Text
+              style={[
+                styles.statusLabel,
+                isDarkMode && styles.darkSecondaryText,
+              ]}
+            >
+              Speed
+            </Text>
             <View style={styles.speedGauge}>
-              <Text style={styles.speedValue}>{speed}%</Text>
-              <View style={styles.speedBar}>
+              <Text style={[styles.speedValue, isDarkMode && styles.darkText]}>
+                {speed}%
+              </Text>
+              <View
+                style={[styles.speedBar, isDarkMode && styles.darkProgressBg]}
+              >
                 <View style={[styles.speedIndicator, { width: `${speed}%` }]} />
               </View>
             </View>
@@ -107,7 +160,7 @@ const MovementStatus = ({ movement, speed }) => {
 };
 
 // Component per la visualizzazione dello stato del WiFi
-const WifiStatus = ({ wifiStrength }) => {
+const WifiStatus = ({ wifiStrength, isDarkMode }) => {
   // Calcola la qualità del segnale in percentuale
   const signalQuality = Math.max(
     0,
@@ -120,31 +173,192 @@ const WifiStatus = ({ wifiStrength }) => {
   else if (signalQuality > 20) qualityLabel = "Poor";
 
   return (
-    <View style={styles.card}>
+    <View style={[styles.card, isDarkMode && styles.darkCard]}>
       <View style={styles.cardHeader}>
-        <Feather name="wifi" size={24} style={styles.cardIcon} />
-        <Text style={styles.cardTitle}>WiFi Status</Text>
+        <Feather
+          name="wifi"
+          size={24}
+          style={[styles.cardIcon, isDarkMode && styles.darkCardIcon]}
+        />
+        <Text style={[styles.cardTitle, isDarkMode && styles.darkText]}>
+          WiFi Status
+        </Text>
       </View>
       <View style={styles.cardContent}>
         <View style={styles.wifiInfo}>
-          <Text style={styles.signalValue}>{wifiStrength} dBm</Text>
+          <Text style={[styles.signalValue, isDarkMode && styles.darkText]}>
+            {wifiStrength} dBm
+          </Text>
           <View style={styles.signalMeter}>
             <View style={styles.signalBars}>
               <View
-                style={[styles.bar, signalQuality > 20 && styles.activeBar]}
+                style={[
+                  styles.bar,
+                  isDarkMode && styles.darkBar,
+                  signalQuality > 20 && styles.activeBar,
+                ]}
               />
               <View
-                style={[styles.bar, signalQuality > 40 && styles.activeBar]}
+                style={[
+                  styles.bar,
+                  isDarkMode && styles.darkBar,
+                  signalQuality > 40 && styles.activeBar,
+                ]}
               />
               <View
-                style={[styles.bar, signalQuality > 60 && styles.activeBar]}
+                style={[
+                  styles.bar,
+                  isDarkMode && styles.darkBar,
+                  signalQuality > 60 && styles.activeBar,
+                ]}
               />
               <View
-                style={[styles.bar, signalQuality > 80 && styles.activeBar]}
+                style={[
+                  styles.bar,
+                  isDarkMode && styles.darkBar,
+                  signalQuality > 80 && styles.activeBar,
+                ]}
               />
             </View>
-            <Text style={styles.signalQuality}>{qualityLabel}</Text>
+            <Text
+              style={[
+                styles.signalQuality,
+                isDarkMode && styles.darkSecondaryText,
+              ]}
+            >
+              {qualityLabel}
+            </Text>
           </View>
+        </View>
+      </View>
+    </View>
+  );
+};
+
+// Componente del joystick moderno
+const ModernJoystick = ({ sendCommand, isDarkMode }) => {
+  const [activeButton, setActiveButton] = useState(null);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
+  const handlePressIn = (command) => {
+    setActiveButton(command);
+    sendCommand(command);
+    Animated.spring(scaleAnim, {
+      toValue: 0.95,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    setActiveButton(null);
+    sendCommand("stop");
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  return (
+    <View style={styles.joystickContainer}>
+      <View style={styles.joystickGrid}>
+        {/* Top button (Forward) */}
+        <View style={styles.joystickRow}>
+          <View style={styles.joystickSpacer} />
+          <TouchableOpacity
+            style={[
+              styles.joystickButton,
+              isDarkMode && styles.darkJoystickButton,
+              activeButton === "forward" && styles.activeJoystickButton,
+            ]}
+            onPressIn={() => handlePressIn("forward")}
+            onPressOut={handlePressOut}
+          >
+            <Feather
+              name="chevron-up"
+              size={28}
+              color={isDarkMode ? "#fff" : "#333"}
+            />
+          </TouchableOpacity>
+          <View style={styles.joystickSpacer} />
+        </View>
+
+        {/* Middle row (Left, Stop, Right) */}
+        <View style={styles.joystickRow}>
+          <TouchableOpacity
+            style={[
+              styles.joystickButton,
+              isDarkMode && styles.darkJoystickButton,
+              activeButton === "left" && styles.activeJoystickButton,
+            ]}
+            onPressIn={() => handlePressIn("left")}
+            onPressOut={handlePressOut}
+          >
+            <Feather
+              name="chevron-left"
+              size={28}
+              color={isDarkMode ? "#fff" : "#333"}
+            />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.joystickCenterButton,
+              isDarkMode && styles.darkJoystickCenterButton,
+            ]}
+            onPress={() => sendCommand("stop")}
+          >
+            <Animated.View
+              style={[
+                styles.centerButtonInner,
+                {
+                  transform: [{ scale: scaleAnim }],
+                },
+              ]}
+            >
+              <Feather
+                name="square"
+                size={20}
+                color={isDarkMode ? "#333" : "#fff"}
+              />
+            </Animated.View>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            style={[
+              styles.joystickButton,
+              isDarkMode && styles.darkJoystickButton,
+              activeButton === "right" && styles.activeJoystickButton,
+            ]}
+            onPressIn={() => handlePressIn("right")}
+            onPressOut={handlePressOut}
+          >
+            <Feather
+              name="chevron-right"
+              size={28}
+              color={isDarkMode ? "#fff" : "#333"}
+            />
+          </TouchableOpacity>
+        </View>
+
+        {/* Bottom button (Backward) */}
+        <View style={styles.joystickRow}>
+          <View style={styles.joystickSpacer} />
+          <TouchableOpacity
+            style={[
+              styles.joystickButton,
+              isDarkMode && styles.darkJoystickButton,
+              activeButton === "backward" && styles.activeJoystickButton,
+            ]}
+            onPressIn={() => handlePressIn("backward")}
+            onPressOut={handlePressOut}
+          >
+            <Feather
+              name="chevron-down"
+              size={28}
+              color={isDarkMode ? "#fff" : "#333"}
+            />
+          </TouchableOpacity>
+          <View style={styles.joystickSpacer} />
         </View>
       </View>
     </View>
@@ -162,6 +376,7 @@ export default function App() {
   });
   const [controlMode, setControlMode] = useState("manual");
   const [isConnected, setIsConnected] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const commandIntervalRef = useRef(null);
   const [windowWidth, setWindowWidth] = useState(
     Dimensions.get("window").width
@@ -261,13 +476,17 @@ export default function App() {
     };
   }, [controlMode]);
 
+  // Toggle dark/light theme
+  const toggleTheme = () => {
+    setIsDarkMode(!isDarkMode);
+  };
+
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <View style={styles.header}>
+    <View style={[styles.container, isDarkMode && styles.darkContainer]}>
+      <StatusBar style={isDarkMode ? "light" : "dark"} />
+      <View style={[styles.header, isDarkMode && styles.darkHeader]}>
         <View style={styles.headerContent}>
           <View style={styles.titleSection}>
-            {/* Usando MaterialCommunityIcons per Monitor */}
             <MaterialCommunityIcons
               name="monitor-dashboard"
               size={28}
@@ -275,34 +494,81 @@ export default function App() {
             />
             <Text style={styles.headerTitle}>Robot Control Dashboard</Text>
           </View>
-          <ConnectionStatus isConnected={isConnected} />
+          <View style={styles.headerControls}>
+            <TouchableOpacity style={styles.themeToggle} onPress={toggleTheme}>
+              <Ionicons
+                name={isDarkMode ? "sunny-outline" : "moon-outline"}
+                size={24}
+                color="#fff"
+              />
+            </TouchableOpacity>
+            <ConnectionStatus isConnected={isConnected} />
+          </View>
         </View>
       </View>
       <ScrollView
-        contentContainerStyle={[styles.main, isTablet && styles.tabletMain]}
+        contentContainerStyle={[
+          styles.main,
+          isTablet && styles.tabletMain,
+          isDarkMode && styles.darkMain,
+        ]}
       >
         <View style={styles.modeSelector}>
           <TouchableOpacity
             style={[
               styles.modeButton,
+              isDarkMode && styles.darkModeButton,
               controlMode === "autonomous" && styles.activeModeButton,
             ]}
             onPress={() => switchMode("autonomous")}
             disabled={controlMode === "autonomous"}
           >
-            <Feather name="zap" size={20} style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>Autonomous Mode</Text>
+            <Feather
+              name="zap"
+              size={20}
+              style={[
+                styles.buttonIcon,
+                isDarkMode && styles.darkButtonIcon,
+                controlMode === "autonomous" && styles.activeButtonIcon,
+              ]}
+            />
+            <Text
+              style={[
+                styles.buttonText,
+                isDarkMode && styles.darkButtonText,
+                controlMode === "autonomous" && styles.activeButtonText,
+              ]}
+            >
+              Autonomous Mode
+            </Text>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.modeButton,
+              isDarkMode && styles.darkModeButton,
               controlMode === "manual" && styles.activeModeButton,
             ]}
             onPress={() => switchMode("manual")}
             disabled={controlMode === "manual"}
           >
-            <Feather name="compass" size={20} style={styles.buttonIcon} />
-            <Text style={styles.buttonText}>Manual Mode</Text>
+            <Feather
+              name="compass"
+              size={20}
+              style={[
+                styles.buttonIcon,
+                isDarkMode && styles.darkButtonIcon,
+                controlMode === "manual" && styles.activeButtonIcon,
+              ]}
+            />
+            <Text
+              style={[
+                styles.buttonText,
+                isDarkMode && styles.darkButtonText,
+                controlMode === "manual" && styles.activeButtonText,
+              ]}
+            >
+              Manual Mode
+            </Text>
           </TouchableOpacity>
         </View>
 
@@ -311,59 +577,45 @@ export default function App() {
             distance={robotData.distance}
             irLeft={robotData.irLeft}
             irRight={robotData.irRight}
+            isDarkMode={isDarkMode}
           />
           <MovementStatus
             movement={robotData.movement}
             speed={robotData.speed}
+            isDarkMode={isDarkMode}
           />
-          <WifiStatus wifiStrength={robotData.wifiStrength} />
+          <WifiStatus
+            wifiStrength={robotData.wifiStrength}
+            isDarkMode={isDarkMode}
+          />
         </View>
 
         {controlMode === "manual" && (
-          <View style={styles.manualControlPanel}>
-            <Text style={styles.controlPanelTitle}>Manual Control</Text>
-            <Text style={styles.controlDescription}>
-              Use the buttons below or arrow keys on your keyboard
+          <View
+            style={[styles.manualControlPanel, isDarkMode && styles.darkCard]}
+          >
+            <Text
+              style={[styles.controlPanelTitle, isDarkMode && styles.darkText]}
+            >
+              Manual Control
             </Text>
-            <View style={styles.controlPad}>
-              <TouchableOpacity
-                style={styles.controlButton}
-                onPressIn={() => sendCommand("forward")}
-                onPressOut={() => sendCommand("stop")}
-              >
-                <Text style={styles.controlButtonText}>▲</Text>
-              </TouchableOpacity>
-              <View style={styles.middleRow}>
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPressIn={() => sendCommand("left")}
-                  onPressOut={() => sendCommand("stop")}
-                >
-                  <Text style={styles.controlButtonText}>◄</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPress={() => sendCommand("stop")}
-                >
-                  <Text style={styles.controlButtonText}>■</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.controlButton}
-                  onPressIn={() => sendCommand("right")}
-                  onPressOut={() => sendCommand("stop")}
-                >
-                  <Text style={styles.controlButtonText}>►</Text>
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity
-                style={styles.controlButton}
-                onPressIn={() => sendCommand("backward")}
-                onPressOut={() => sendCommand("stop")}
-              >
-                <Text style={styles.controlButtonText}>▼</Text>
-              </TouchableOpacity>
-            </View>
-            <Text style={styles.keyboardHint}>
+            <Text
+              style={[
+                styles.controlDescription,
+                isDarkMode && styles.darkSecondaryText,
+              ]}
+            >
+              Use the joystick below or arrow keys on your keyboard
+            </Text>
+
+            <ModernJoystick sendCommand={sendCommand} isDarkMode={isDarkMode} />
+
+            <Text
+              style={[
+                styles.keyboardHint,
+                isDarkMode && styles.darkSecondaryText,
+              ]}
+            >
               You can also use your keyboard arrow keys
             </Text>
           </View>
@@ -378,11 +630,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f2f2f2",
   },
+  darkContainer: {
+    backgroundColor: "#121212",
+  },
   header: {
     backgroundColor: "#007bff",
     paddingTop: 50,
     paddingBottom: 20,
     paddingHorizontal: 16,
+  },
+  darkHeader: {
+    backgroundColor: "#1a1f3c",
   },
   headerContent: {
     flexDirection: "row",
@@ -392,6 +650,14 @@ const styles = StyleSheet.create({
   titleSection: {
     flexDirection: "row",
     alignItems: "center",
+  },
+  headerControls: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  themeToggle: {
+    padding: 8,
+    marginRight: 12,
   },
   dashboardIcon: {
     color: "#fff",
@@ -429,6 +695,9 @@ const styles = StyleSheet.create({
   main: {
     padding: 16,
   },
+  darkMain: {
+    backgroundColor: "#121212",
+  },
   tabletMain: {
     paddingHorizontal: 32,
   },
@@ -441,20 +710,36 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     backgroundColor: "#e0e0e0",
-    paddingHorizontal: 12,
-    paddingVertical: 8,
-    borderRadius: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 10,
+    elevation: 2,
+  },
+  darkModeButton: {
+    backgroundColor: "#2c2c2c",
   },
   activeModeButton: {
     backgroundColor: "#007bff",
   },
   buttonIcon: {
-    marginRight: 4,
-    color: "#000",
+    marginRight: 8,
+    color: "#333",
+  },
+  darkButtonIcon: {
+    color: "#e0e0e0",
+  },
+  activeButtonIcon: {
+    color: "#fff",
   },
   buttonText: {
-    color: "#000",
+    color: "#333",
     fontWeight: "bold",
+  },
+  darkButtonText: {
+    color: "#e0e0e0",
+  },
+  activeButtonText: {
+    color: "#fff",
   },
   dashboardGrid: {
     flexDirection: "column",
@@ -462,48 +747,70 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 12,
+    borderRadius: 12,
+    padding: 16,
     marginBottom: 16,
     elevation: 3,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+  },
+  darkCard: {
+    backgroundColor: "#1e1e1e",
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
   },
   cardHeader: {
     flexDirection: "row",
     alignItems: "center",
-    marginBottom: 8,
+    marginBottom: 12,
   },
   cardIcon: {
     marginRight: 8,
     color: "#007bff",
+  },
+  darkCardIcon: {
+    color: "#4da3ff",
   },
   cardTitle: {
     fontSize: 18,
     fontWeight: "bold",
     color: "#333",
   },
+  darkText: {
+    color: "#fff",
+  },
+  darkSecondaryText: {
+    color: "#aaa",
+  },
   cardContent: {
     // content styling for each card
   },
   sensorValue: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   sensorLabel: {
     fontSize: 14,
     color: "#555",
-  },
-  sensorReading: {
-    fontSize: 16,
-    fontWeight: "bold",
     marginBottom: 4,
   },
+  sensorReading: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
   sensorBar: {
-    height: 6,
+    height: 8,
     backgroundColor: "#ddd",
-    borderRadius: 3,
+    borderRadius: 4,
     overflow: "hidden",
   },
+  darkProgressBg: {
+    backgroundColor: "#333",
+  },
   sensorProgress: {
-    height: 6,
+    height: 8,
     backgroundColor: "#007bff",
   },
   sensorsGrid: {
@@ -513,9 +820,14 @@ const styles = StyleSheet.create({
   irSensor: {
     flex: 1,
     alignItems: "center",
+    padding: 8,
+    borderRadius: 8,
+    backgroundColor: "#f5f5f5",
+    marginHorizontal: 4,
   },
   sensorStatus: {
-    fontSize: 14,
+    fontSize: 16,
+    fontWeight: "bold",
     marginTop: 4,
   },
   clear: {
@@ -528,14 +840,15 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   currentStatus: {
-    marginBottom: 12,
+    marginBottom: 16,
   },
   statusLabel: {
     fontSize: 14,
     color: "#555",
+    marginBottom: 4,
   },
   movementValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
   },
   speedDisplay: {
@@ -545,39 +858,43 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   speedValue: {
-    fontSize: 14,
-    marginBottom: 4,
+    fontSize: 16,
+    marginBottom: 8,
   },
   speedBar: {
-    height: 6,
+    height: 8,
     backgroundColor: "#ddd",
-    borderRadius: 3,
+    borderRadius: 4,
     overflow: "hidden",
   },
   speedIndicator: {
-    height: 6,
+    height: 8,
     backgroundColor: "#007bff",
   },
   wifiInfo: {
     alignItems: "center",
   },
   signalValue: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: "bold",
-    marginBottom: 4,
+    marginBottom: 8,
   },
   signalMeter: {
     alignItems: "center",
   },
   signalBars: {
     flexDirection: "row",
-    marginBottom: 4,
+    marginBottom: 8,
   },
   bar: {
-    width: 6,
-    height: 20,
+    width: 8,
+    height: 24,
     backgroundColor: "#ddd",
-    marginHorizontal: 2,
+    marginHorizontal: 3,
+    borderRadius: 2,
+  },
+  darkBar: {
+    backgroundColor: "#444",
   },
   activeBar: {
     backgroundColor: "#007bff",
@@ -588,48 +905,91 @@ const styles = StyleSheet.create({
   },
   manualControlPanel: {
     backgroundColor: "#fff",
-    borderRadius: 8,
-    padding: 16,
+    borderRadius: 12,
+    padding: 20,
     elevation: 3,
     alignItems: "center",
     marginTop: 16,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
   },
   controlPanelTitle: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: "bold",
     marginBottom: 8,
   },
   controlDescription: {
     fontSize: 14,
     color: "#555",
-    marginBottom: 12,
+    marginBottom: 20,
     textAlign: "center",
   },
-  controlPad: {
-    flexDirection: "column",
-    alignItems: "center",
-  },
-  middleRow: {
-    flexDirection: "row",
-    justifyContent: "space-around",
-    width: "100%",
-    marginVertical: 8,
-  },
-  controlButton: {
-    backgroundColor: "#e0e0e0",
-    padding: 12,
-    borderRadius: 4,
-    margin: 4,
-    minWidth: 50,
-    alignItems: "center",
-  },
-  controlButtonText: {
-    fontSize: 18,
-    fontWeight: "bold",
-  },
   keyboardHint: {
-    marginTop: 12,
+    marginTop: 16,
     fontSize: 12,
     color: "#777",
+  },
+  // Modern Joystick Styles
+  joystickContainer: {
+    marginVertical: 16,
+    alignItems: "center",
+  },
+  joystickGrid: {
+    width: 220,
+    height: 220,
+  },
+  joystickRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    height: 70,
+    marginVertical: 4,
+  },
+  joystickSpacer: {
+    width: 70,
+  },
+  joystickButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#f2f2f2",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  darkJoystickButton: {
+    backgroundColor: "#2c2c2c",
+  },
+  activeJoystickButton: {
+    backgroundColor: "#007bff",
+  },
+  joystickCenterButton: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#007bff",
+    justifyContent: "center",
+    alignItems: "center",
+    elevation: 4,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 3,
+  },
+  darkJoystickCenterButton: {
+    backgroundColor: "#4da3ff",
+  },
+  centerButtonInner: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#fff",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
